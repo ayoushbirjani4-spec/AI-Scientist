@@ -1,0 +1,40 @@
+{
+  "run_id": "active_high_seed3",
+  "simulator_version": "pymunk-7.3.1",
+  "dt": 0.004166666666666667,
+  "record_every": 8,
+  "damping": 1.0,
+  "surface_friction": 1.0,
+  "objects": {
+    "ball": {
+      "shape": "circle",
+      "radius": 0.1,
+      "mass": 1.0,
+      "elasticity": 0.0
+    },
+    "block": {
+      "shape": "box",
+      "size": [
+        0.3,
+        0.2
+      ],
+      "mass": 1.0,
+      "elasticity": 0.0
+    },
+    "heavy_block": {
+      "shape": "box",
+      "size": [
+        0.4,
+        0.2
+      ],
+      "mass": 3.0,
+      "elasticity": 0.0
+    }
+  },
+  "strategy": "active",
+  "noise": "high",
+  "noise_pos": 0.03,
+  "noise_vel": 0.3,
+  "seed": 3,
+  "budget": 8
+}

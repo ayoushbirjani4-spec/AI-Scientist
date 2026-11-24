@@ -1,0 +1,19 @@
+sweep 20/240  257s
+sweep 40/240  490s
+sweep 60/240  702s
+sweep 80/240  823s
+sweep 100/240  935s
+sweep 120/240  1076s
+sweep 140/240  1188s
+sweep 160/240  7639s
+sweep 180/240  8143s
+sweep 200/240  8578s
+sweep 220/240  8763s
+sweep 240/240  8908s
+change 20/96  9440s
+change 40/96  9856s
+change 60/96  10237s
+change 80/96  10694s
+change 96/96  10889s
+done in 10931s -> results/
+exit 0

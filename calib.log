@@ -1,0 +1,64 @@
+calibration 1/48
+calibration 2/48
+calibration 3/48
+calibration 4/48
+calibration 5/48
+calibration 6/48
+calibration 7/48
+calibration 8/48
+calibration 9/48
+calibration 10/48
+calibration 11/48
+calibration 12/48
+calibration 13/48
+calibration 14/48
+calibration 15/48
+calibration 16/48
+calibration 17/48
+calibration 18/48
+calibration 19/48
+calibration 20/48
+calibration 21/48
+calibration 22/48
+calibration 23/48
+calibration 24/48
+calibration 25/48
+calibration 26/48
+calibration 27/48
+calibration 28/48
+calibration 29/48
+calibration 30/48
+calibration 31/48
+calibration 32/48
+calibration 33/48
+calibration 34/48
+calibration 35/48
+calibration 36/48
+calibration 37/48
+calibration 38/48
+calibration 39/48
+calibration 40/48
+calibration 41/48
+calibration 42/48
+calibration 43/48
+calibration 44/48
+calibration 45/48
+calibration 46/48
+calibration 47/48
+calibration 48/48
+# CUSUM calibration (seeds 100+, not used for reporting)
+
+h = 1.25 × the largest CUSUM value seen in any clean experiment (clean runs plus the pre-change part of change runs), so no clean calibration experiment would flag.
+
+| drift | h | changes caught on the contaminated experiment | mean change-time error (s) |
+|---|---|---|---|
+| 0.5 | 68.3 | 9/24 | 0.037 |
+| 1.0 | 51.9 | 10/24 | 0.058 |
+| 2.0 | 22.9 | 11/24 | 0.095 |
+| 3.0 | 8.3 | 12/24 | 0.179 |
+| 4.0 | 3.3 | 13/24 | 0.180 |
+| 5.0 | 1.6 | 13/24 | 0.187 |
+
+Chosen: drift = 4.0, h = 3.3 (most changes caught; ties go to the smaller drift).
+
+exit 0

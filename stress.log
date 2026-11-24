@@ -1,0 +1,85 @@
+stress 1/72
+stress 2/72
+stress 3/72
+stress 4/72
+stress 5/72
+stress 6/72
+stress 7/72
+stress 8/72
+stress 9/72
+stress 10/72
+stress 11/72
+stress 12/72
+stress 13/72
+stress 14/72
+stress 15/72
+stress 16/72
+stress 17/72
+stress 18/72
+stress 19/72
+stress 20/72
+stress 21/72
+stress 22/72
+stress 23/72
+stress 24/72
+stress 25/72
+stress 26/72
+stress 27/72
+stress 28/72
+stress 29/72
+stress 30/72
+stress 31/72
+stress 32/72
+stress 33/72
+stress 34/72
+stress 35/72
+stress 36/72
+stress 37/72
+stress 38/72
+stress 39/72
+stress 40/72
+stress 41/72
+stress 42/72
+stress 43/72
+stress 44/72
+stress 45/72
+stress 46/72
+stress 47/72
+stress 48/72
+stress 49/72
+stress 50/72
+stress 51/72
+stress 52/72
+stress 53/72
+stress 54/72
+stress 55/72
+stress 56/72
+stress 57/72
+stress 58/72
+stress 59/72
+stress 60/72
+stress 61/72
+stress 62/72
+stress 63/72
+stress 64/72
+stress 65/72
+stress 66/72
+stress 67/72
+stress 68/72
+stress 69/72
+stress 70/72
+stress 71/72
+stress 72/72
+# Stress test: physics changes inside an experiment
+
+Active strategy, Stage A predictor, budget 10. In change runs, g and μ are re-drawn 0.15–0.65 s into experiment 5; control runs have no change. 6 seeds per cell. Delay counts experiments from the contaminated one (1 = flagged on it). Recovery counts experiments after the contaminated one until the estimate stays within |g error| ≤ 1 % and |μ error| ≤ 0.01. Within-experiment CUSUM settings (drift 3, h 8.3) were chosen on separate calibration seeds (calibrate_cusum.py).
+
+| noise | detector | detected | mean delay | flagged on the contaminated experiment | change-time error, median / mean (s) | false-alarm runs | recovered | mean recovery |
+|---|---|---|---|---|---|---|---|---|
+| low | between | 6/6 | 2.17 | 0/6 | – | 0/12 | 6/6 | 2.67 |
+| low | between+within | 6/6 | 1.00 | 6/6 | 0.07 / 0.09 | 4/12 | 6/6 | 2.00 |
+| medium | between | 6/6 | 2.17 | 0/6 | – | 0/12 | 6/6 | 2.83 |
+| medium | between+within | 6/6 | 1.17 | 5/6 | 0.16 / 0.17 | 0/12 | 6/6 | 2.00 |
+| high | between | 6/6 | 2.83 | 0/6 | – | 0/12 | 6/6 | 2.67 |
+| high | between+within | 6/6 | 1.83 | 1/6 | 0.15 / 0.15 | 0/12 | 6/6 | 2.83 |
+exit 0

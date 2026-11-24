@@ -1,0 +1,119 @@
+loaded 4000 trajectories from data\gnn_dataset.npz
+split: 3200 train / 400 val / 400 test trajectories
+  member 0 one-step epoch 5/30: loss 0.4002
+  member 0 one-step epoch 10/30: loss 0.2876
+  member 0 one-step epoch 15/30: loss 0.2264
+  member 0 one-step epoch 20/30: loss 0.1830
+  member 0 one-step epoch 25/30: loss 0.1417
+  member 0 one-step epoch 30/30: loss 0.1290
+  member 0 rollout epoch 1/16: loss 0.9433  val pos RMSE 0.1075 m
+  member 0 rollout epoch 2/16: loss 0.6123  val pos RMSE 0.0934 m
+  member 0 rollout epoch 3/16: loss 0.5215  val pos RMSE 0.0893 m
+  member 0 rollout epoch 4/16: loss 0.4806  val pos RMSE 0.0885 m
+  member 0 rollout epoch 5/16: loss 0.4014  val pos RMSE 0.0811 m
+  member 0 rollout epoch 6/16: loss 0.4130  val pos RMSE 0.0760 m
+  member 0 rollout epoch 7/16: loss 0.3317  val pos RMSE 0.0722 m
+  member 0 rollout epoch 8/16: loss 0.3298  val pos RMSE 0.0740 m
+  member 0 rollout epoch 9/16: loss 0.3141  val pos RMSE 0.0728 m
+  member 0 rollout epoch 10/16: loss 0.3090  val pos RMSE 0.0723 m
+  member 0 rollout epoch 11/16: loss 0.2724  val pos RMSE 0.0660 m
+  member 0 rollout epoch 12/16: loss 0.2488  val pos RMSE 0.0655 m
+  member 0 rollout epoch 13/16: loss 0.2264  val pos RMSE 0.0633 m
+  member 0 rollout epoch 14/16: loss 0.2155  val pos RMSE 0.0664 m
+  member 0 rollout epoch 15/16: loss 0.2084  val pos RMSE 0.0660 m
+  member 0 rollout epoch 16/16: loss 0.2032  val pos RMSE 0.0640 m
+member 0: val pos RMSE 0.0640 m (955s)
+  member 1 one-step epoch 5/30: loss 0.3797
+  member 1 one-step epoch 10/30: loss 0.2771
+  member 1 one-step epoch 15/30: loss 0.2480
+  member 1 one-step epoch 20/30: loss 0.1847
+  member 1 one-step epoch 25/30: loss 0.1457
+  member 1 one-step epoch 30/30: loss 0.1321
+  member 1 rollout epoch 1/16: loss 0.9692  val pos RMSE 0.1204 m
+  member 1 rollout epoch 2/16: loss 0.6593  val pos RMSE 0.1411 m
+  member 1 rollout epoch 3/16: loss 0.4815  val pos RMSE 0.1261 m
+  member 1 rollout epoch 4/16: loss 0.4775  val pos RMSE 0.1112 m
+  member 1 rollout epoch 5/16: loss 0.4573  val pos RMSE 0.1215 m
+  member 1 rollout epoch 6/16: loss 0.3689  val pos RMSE 0.1087 m
+  member 1 rollout epoch 7/16: loss 0.3503  val pos RMSE 0.0875 m
+  member 1 rollout epoch 8/16: loss 0.3296  val pos RMSE 0.0919 m
+  member 1 rollout epoch 9/16: loss 0.3068  val pos RMSE 0.0893 m
+  member 1 rollout epoch 10/16: loss 0.2931  val pos RMSE 0.1025 m
+  member 1 rollout epoch 11/16: loss 0.2617  val pos RMSE 0.0885 m
+  member 1 rollout epoch 12/16: loss 0.2501  val pos RMSE 0.0821 m
+  member 1 rollout epoch 13/16: loss 0.2348  val pos RMSE 0.0859 m
+  member 1 rollout epoch 14/16: loss 0.2184  val pos RMSE 0.0883 m
+  member 1 rollout epoch 15/16: loss 0.2139  val pos RMSE 0.0809 m
+  member 1 rollout epoch 16/16: loss 0.2022  val pos RMSE 0.0814 m
+member 1: val pos RMSE 0.0814 m (614s)
+  member 2 one-step epoch 5/30: loss 0.3754
+  member 2 one-step epoch 10/30: loss 0.2619
+  member 2 one-step epoch 15/30: loss 0.2135
+  member 2 one-step epoch 20/30: loss 0.1874
+  member 2 one-step epoch 25/30: loss 0.1342
+  member 2 one-step epoch 30/30: loss 0.1240
+  member 2 rollout epoch 1/16: loss 1.0834  val pos RMSE 0.1176 m
+  member 2 rollout epoch 2/16: loss 0.5878  val pos RMSE 0.1154 m
+  member 2 rollout epoch 3/16: loss 0.5266  val pos RMSE 0.1110 m
+  member 2 rollout epoch 4/16: loss 0.5141  val pos RMSE 0.1124 m
+  member 2 rollout epoch 5/16: loss 0.4350  val pos RMSE 0.0903 m
+  member 2 rollout epoch 6/16: loss 0.4209  val pos RMSE 0.0891 m
+  member 2 rollout epoch 7/16: loss 0.3443  val pos RMSE 0.0793 m
+  member 2 rollout epoch 8/16: loss 0.3770  val pos RMSE 0.0798 m
+  member 2 rollout epoch 9/16: loss 0.2988  val pos RMSE 0.0715 m
+  member 2 rollout epoch 10/16: loss 0.2706  val pos RMSE 0.0754 m
+  member 2 rollout epoch 11/16: loss 0.2675  val pos RMSE 0.0706 m
+  member 2 rollout epoch 12/16: loss 0.2367  val pos RMSE 0.0699 m
+  member 2 rollout epoch 13/16: loss 0.2208  val pos RMSE 0.0698 m
+  member 2 rollout epoch 14/16: loss 0.2092  val pos RMSE 0.0685 m
+  member 2 rollout epoch 15/16: loss 0.1993  val pos RMSE 0.0686 m
+  member 2 rollout epoch 16/16: loss 0.1944  val pos RMSE 0.0685 m
+member 2: val pos RMSE 0.0685 m (381s)
+  member 3 one-step epoch 5/30: loss 0.3759
+  member 3 one-step epoch 10/30: loss 0.2838
+  member 3 one-step epoch 15/30: loss 0.2274
+  member 3 one-step epoch 20/30: loss 0.1830
+  member 3 one-step epoch 25/30: loss 0.1374
+  member 3 one-step epoch 30/30: loss 0.1228
+  member 3 rollout epoch 1/16: loss 0.9187  val pos RMSE 0.0995 m
+  member 3 rollout epoch 2/16: loss 0.5969  val pos RMSE 0.1087 m
+  member 3 rollout epoch 3/16: loss 0.4951  val pos RMSE 0.0984 m
+  member 3 rollout epoch 4/16: loss 0.5358  val pos RMSE 0.0926 m
+  member 3 rollout epoch 5/16: loss 0.4589  val pos RMSE 0.0987 m
+  member 3 rollout epoch 6/16: loss 0.3984  val pos RMSE 0.0933 m
+  member 3 rollout epoch 7/16: loss 0.4083  val pos RMSE 0.1035 m
+  member 3 rollout epoch 8/16: loss 0.3577  val pos RMSE 0.0789 m
+  member 3 rollout epoch 9/16: loss 0.2996  val pos RMSE 0.0855 m
+  member 3 rollout epoch 10/16: loss 0.2741  val pos RMSE 0.0796 m
+  member 3 rollout epoch 11/16: loss 0.2745  val pos RMSE 0.0851 m
+  member 3 rollout epoch 12/16: loss 0.2377  val pos RMSE 0.0775 m
+  member 3 rollout epoch 13/16: loss 0.2280  val pos RMSE 0.0768 m
+  member 3 rollout epoch 14/16: loss 0.2207  val pos RMSE 0.0699 m
+  member 3 rollout epoch 15/16: loss 0.2091  val pos RMSE 0.0759 m
+  member 3 rollout epoch 16/16: loss 0.2036  val pos RMSE 0.0719 m
+member 3: val pos RMSE 0.0719 m (372s)
+  member 4 one-step epoch 5/30: loss 0.3792
+  member 4 one-step epoch 10/30: loss 0.2680
+  member 4 one-step epoch 15/30: loss 0.2535
+  member 4 one-step epoch 20/30: loss 0.1751
+  member 4 one-step epoch 25/30: loss 0.1371
+  member 4 one-step epoch 30/30: loss 0.1237
+  member 4 rollout epoch 1/16: loss 1.0985  val pos RMSE 0.1699 m
+  member 4 rollout epoch 2/16: loss 0.8335  val pos RMSE 0.1255 m
+  member 4 rollout epoch 3/16: loss 0.5799  val pos RMSE 0.0992 m
+  member 4 rollout epoch 4/16: loss 0.5035  val pos RMSE 0.0847 m
+  member 4 rollout epoch 5/16: loss 0.4878  val pos RMSE 0.0886 m
+  member 4 rollout epoch 6/16: loss 0.4424  val pos RMSE 0.1033 m
+  member 4 rollout epoch 7/16: loss 0.3790  val pos RMSE 0.0843 m
+  member 4 rollout epoch 8/16: loss 0.3757  val pos RMSE 0.0792 m
+  member 4 rollout epoch 9/16: loss 0.3388  val pos RMSE 0.0749 m
+  member 4 rollout epoch 10/16: loss 0.3444  val pos RMSE 0.0771 m
+  member 4 rollout epoch 11/16: loss 0.2803  val pos RMSE 0.0746 m
+  member 4 rollout epoch 12/16: loss 0.2698  val pos RMSE 0.0757 m
+  member 4 rollout epoch 13/16: loss 0.2413  val pos RMSE 0.0670 m
+  member 4 rollout epoch 14/16: loss 0.2230  val pos RMSE 0.0710 m
+  member 4 rollout epoch 15/16: loss 0.2137  val pos RMSE 0.0679 m
+  member 4 rollout epoch 16/16: loss 0.2099  val pos RMSE 0.0662 m
+member 4: val pos RMSE 0.0662 m (6528s)
+saved models\gnn_ensemble.pt in 8852s
+exit 0

@@ -1,0 +1,57 @@
+# Stage B: GNN world model vs Stage A simulator
+
+Model: stageB-gnn-ensemble5, trained on 4000 trajectories (80/10/10 split by scene and parameter draw).
+
+![rollout error](rollout_error_vs_time.png)
+
+## 1. Rollout accuracy on held-out trajectories
+
+400 test trajectories, each an unseen (scene, g, μ) draw. Open-loop rollout of the ensemble mean from the known setup, compared with the noiseless simulator.
+
+| experiment | n | position RMSE (m) | median final position error (m) |
+|---|---|---|---|
+| drop | 110 | 0.0201 | 0.0082 |
+| flat_slide | 90 | 0.0304 | 0.0159 |
+| ramp_slide | 91 | 0.0753 | 0.0926 |
+| impulse | 109 | 0.0373 | 0.0190 |
+| all | 400 | 0.0456 | |
+
+One-step velocity error (ensemble mean), by transition type:
+
+| transition | count | median |Δv error| (m/s) | 95th percentile |
+|---|---|---|---|
+| free flight | 2120 | 0.0095 | 0.0486 |
+| contact (sliding/resting) | 11608 | 0.0085 | 0.0479 |
+| impact (lands this step) | 162 | 0.1211 | 0.9114 |
+
+Calibration: fraction of test predictions inside the model's own 90 % band (ensemble spread + calibrated floor; ideal 0.90):
+
+| x | y | vx | vy |
+|---|---|---|---|
+| 0.93 | 0.91 | 0.93 | 0.95 |
+
+## 2. Speed
+
+Predicting one ramp-slide experiment for 400 hypotheses:
+
+| predictor | seconds |
+|---|---|
+| Stage A (Pymunk) | 0.763 |
+| Stage B (GNN ensemble of 5) | 0.681 |
+
+![stage A vs B](stageA_vs_stageB.png)
+
+## 3. Inference with Stage B as the world model
+
+Same seeds (0–9), hidden physics and observation noise as the Stage A sweep; the world is still Pymunk. Budget 10; threshold |g error| ≤ 1 %, |μ error| ≤ 0.01, held to the end (never reached counts as 11).
+
+| noise | strategy | predictor | mean exps (never = 11) | reached | final g rel err (median) | final μ err (median) | 90% CI coverage g / μ | traj RMSE m (median) | s / run |
+|---|---|---|---|---|---|---|---|---|---|
+| medium | active | A (simulator) | 1.70 | 10/10 | 0.0001 | 0.0002 | 0.88 / 0.97 | 0.0002 | 36 |
+| medium | active | B (GNN) | 8.80 | 3/10 | 0.0076 | 0.0175 | 0.23 / 0.21 | 0.0161 | 52 |
+| medium | random | A (simulator) | 2.50 | 10/10 | 0.0012 | 0.0003 | 0.94 / 0.97 | 0.0008 | 15 |
+| medium | random | B (GNN) | 9.80 | 2/10 | 0.0497 | 0.0181 | 0.32 / 0.32 | 0.0192 | 18 |
+| high | active | A (simulator) | 1.80 | 10/10 | 0.0004 | 0.0006 | 0.91 / 0.95 | 0.0007 | 30 |
+| high | active | B (GNN) | 10.70 | 1/10 | 0.0190 | 0.0115 | 0.22 / 0.08 | 0.0154 | 50 |
+| high | random | A (simulator) | 3.40 | 10/10 | 0.0044 | 0.0009 | 0.97 / 0.97 | 0.0022 | 59 |
+| high | random | B (GNN) | 10.30 | 2/10 | 0.0264 | 0.0114 | 0.43 / 0.34 | 0.0131 | 18 |

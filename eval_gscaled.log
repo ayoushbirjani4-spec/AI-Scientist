@@ -1,0 +1,115 @@
+C:\Users\Ayush Birjani\OneDrive\Desktop\AI-scientist\hidden_physics\evaluate_gnn.py:103: RuntimeWarning: invalid value encountered in divide
+  z = np.abs(mean[..., LIKELIHOOD_COLS] - test.states[..., LIKELIHOOD_COLS]) / np.sqrt(var)
+  inference 1/40
+  inference 2/40
+  inference 3/40
+  inference 4/40
+  inference 5/40
+  inference 6/40
+  inference 7/40
+  inference 8/40
+  inference 9/40
+  inference 10/40
+  inference 11/40
+  inference 12/40
+  inference 13/40
+  inference 14/40
+  inference 15/40
+  inference 16/40
+  inference 17/40
+  inference 18/40
+  inference 19/40
+  inference 20/40
+  inference 21/40
+  inference 22/40
+  inference 23/40
+  inference 24/40
+  inference 25/40
+  inference 26/40
+  inference 27/40
+  inference 28/40
+  inference 29/40
+  inference 30/40
+  inference 31/40
+  inference 32/40
+  inference 33/40
+  inference 34/40
+  inference 35/40
+  inference 36/40
+  inference 37/40
+  inference 38/40
+  inference 39/40
+  inference 40/40
+# Stage B: GNN world model vs Stage A simulator
+
+Model: stageB-gnn-gscaled-ensemble5, trained on 4000 trajectories (80/10/10 split by scene and parameter draw).
+
+![rollout error](rollout_error_vs_time.png)
+
+## 1. Rollout accuracy on held-out trajectories
+
+400 test trajectories, each an unseen (scene, g, μ) draw. Open-loop rollout of the ensemble mean from the known setup, compared with the noiseless simulator.
+
+| experiment | n | position RMSE (m) | median final position error (m) |
+|---|---|---|---|
+| drop | 110 | 0.0039 | 0.0034 |
+| flat_slide | 90 | 0.0076 | 0.0038 |
+| ramp_slide | 91 | 0.0207 | 0.0204 |
+| impulse | 109 | 0.0122 | 0.0070 |
+| all | 400 | 0.0127 | |
+
+One-step velocity error (ensemble mean), by transition type:
+
+| transition | count | median |Δv error| (m/s) | 95th percentile |
+|---|---|---|---|
+| free flight | 2120 | 0.0017 | 0.0113 |
+| contact (sliding/resting) | 11608 | 0.0043 | 0.0251 |
+| impact (lands this step) | 162 | 0.0761 | 0.7650 |
+
+Calibration: fraction of test predictions (after the first frame) inside the model's own 90 % band (ensemble spread + calibrated floor; ideal 0.90):
+
+| x | y | vx | vy |
+|---|---|---|---|
+| 0.91 | 0.94 | 0.97 | 0.99 |
+
+## 1b. Can g be recovered through the model?
+
+Best-fit g (grid step 0.025) when noise-free simulator trajectories are fitted through the learned model with μ = 0.3 known. Stage A recovers g exactly.
+
+| experiment | g* = 4 | g* = 8 | g* = 12 | g* = 16 |
+|---|---|---|---|---|
+| drop(ball, height=1.50) | 4.03 | 8.07 | 12.00 | 15.88 |
+| drop(block, height=1.00) | 4.00 | 8.00 | 12.00 | 15.90 |
+| flat_slide(block, v0=2.50) | 4.03 | 7.98 | 11.95 | 15.93 |
+| ramp_slide(block, angle_deg=30.00, start=2.00) | 4.05 | 7.88 | 11.70 | 15.62 |
+| impulse(heavy_block, direction_deg=20.00, impulse=4.00) | 4.03 | 8.15 | 12.08 | 15.85 |
+
+Median |bias| 0.6%, worst 2.5%.
+
+## 2. Speed
+
+Predicting one ramp-slide experiment for 400 hypotheses:
+
+| predictor | seconds |
+|---|---|
+| Stage A (Pymunk) | 1.588 |
+| Stage B (GNN ensemble of 5) | 1.517 |
+
+![stage A vs B](stageA_vs_stageB.png)
+
+## 3. Inference with Stage B as the world model
+
+Same seeds (0–9), hidden physics and observation noise as the Stage A sweep; the world is still Pymunk. Budget 10; threshold |g error| ≤ 1 %, |μ error| ≤ 0.01, held to the end (never reached counts as 11).
+
+| noise | strategy | predictor | mean exps (never = 11) | reached | final g rel err (median) | final μ err (median) | 90% CI coverage g / μ | traj RMSE m (median) | s / run |
+|---|---|---|---|---|---|---|---|---|---|
+| medium | active | A (simulator) | 1.70 | 10/10 | 0.0001 | 0.0002 | 0.88 / 0.97 | 0.0002 | 36 |
+| medium | active | B (GNN) | 2.30 | 10/10 | 0.0048 | 0.0023 | 0.19 / 0.41 | 0.0031 | 93 |
+| medium | random | A (simulator) | 2.50 | 10/10 | 0.0012 | 0.0003 | 0.94 / 0.97 | 0.0008 | 15 |
+| medium | random | B (GNN) | 5.10 | 8/10 | 0.0046 | 0.0029 | 0.47 / 0.38 | 0.0043 | 15 |
+| high | active | A (simulator) | 1.80 | 10/10 | 0.0004 | 0.0006 | 0.91 / 0.95 | 0.0007 | 30 |
+| high | active | B (GNN) | 4.00 | 10/10 | 0.0057 | 0.0026 | 0.50 / 0.72 | 0.0041 | 49 |
+| high | random | A (simulator) | 3.40 | 10/10 | 0.0044 | 0.0009 | 0.97 / 0.97 | 0.0022 | 59 |
+| high | random | B (GNN) | 5.40 | 9/10 | 0.0072 | 0.0029 | 0.61 / 0.57 | 0.0044 | 15 |
+
+exit 0
