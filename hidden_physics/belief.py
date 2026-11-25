@@ -31,6 +31,19 @@ def _weighted_quantile(axis: np.ndarray, w: np.ndarray, q: float) -> float:
     return float(np.interp(q, c, axis))
 
 
+def _mixture_quantile(centres: np.ndarray, w: np.ndarray, sd: np.ndarray, q: float) -> float:
+    """q-quantile of sum_i w_i N(centres_i, sd_i^2), by bisection on the CDF."""
+    from math import erf, sqrt
+    keep = w > 1e-12
+    c, w, sd = centres[keep], w[keep] / w[keep].sum(), np.maximum(sd[keep], 1e-12)
+    cdf = lambda x: float(w @ (0.5 * (1 + np.vectorize(erf)((x - c) / (sd * sqrt(2))))))
+    lo, hi = float((c - 6 * sd).min()), float((c + 6 * sd).max())
+    for _ in range(60):
+        mid = 0.5 * (lo + hi)
+        lo, hi = (mid, hi) if cdf(mid) < q else (lo, mid)
+    return 0.5 * (lo + hi)
+
+
 class GridBelief:
     def __init__(self, predictor: SimulatorPredictor, sigma: np.ndarray, n: int = 20,
                  g_range=PRIOR_G, mu_range=PRIOR_MU, max_refines: int = 6,
@@ -41,6 +54,10 @@ class GridBelief:
         self.shrink = shrink
         self.T = 1.0
         self.predictor = predictor
+        # Shared model bias: one offset for the whole run, so it never averages away
+        # over experiments. (relative sd of g, absolute sd of mu); None = no bias term.
+        bsd = getattr(predictor, "param_bias_sd", None)
+        self.bias_sd = None if bsd is None else (float(bsd[0]), float(bsd[1]))
         self.sigma = np.asarray(sigma)
         self.n = n
         self.prior_g, self.prior_mu = tuple(g_range), tuple(mu_range)
@@ -133,7 +150,7 @@ class GridBelief:
 
     def _maybe_refine(self):
         for _ in range(self.max_refines):
-            (mg, mm), (sg, sm) = self.mean, self.sd
+            (mg, mm), (sg, sm) = self.mean, self._raw_sd()
             cg, cm = self.g_axis[1] - self.g_axis[0], self.mu_axis[1] - self.mu_axis[0]
             hg, hm = max(3 * sg, 1.5 * cg), max(3 * sm, 1.5 * cm)
             gr = (max(self.prior_g[0], mg - hg), min(self.prior_g[1], mg + hg))
@@ -168,11 +185,20 @@ class GridBelief:
         w = self.weights
         return float(w @ self.G), float(w @ self.M)
 
-    @property
-    def sd(self) -> tuple[float, float]:
+    def _raw_sd(self) -> tuple[float, float]:
+        """Spread of the grid posterior alone (no shared-bias term); drives grid refinement."""
         w = self.weights
         mg, mm = w @ self.G, w @ self.M
         return float(np.sqrt(w @ (self.G - mg) ** 2)), float(np.sqrt(w @ (self.M - mm) ** 2))
+
+    @property
+    def sd(self) -> tuple[float, float]:
+        sg, sm = self._raw_sd()
+        if self.bias_sd is None:
+            return sg, sm
+        w = self.weights
+        bg, bm = self.bias_sd
+        return float(np.sqrt(sg ** 2 + w @ (self.G * bg) ** 2)), float(np.sqrt(sm ** 2 + bm ** 2))
 
     @property
     def map(self) -> tuple[float, float]:
@@ -183,6 +209,21 @@ class GridBelief:
         w = self.weights.reshape(self.n, self.n)
         lo, hi = (1 - level) / 2, (1 + level) / 2
         wg, wm = w.sum(1), w.sum(0)
+        if self.bias_sd is not None:
+            # Grid posterior is over the parameters as the model sees them; the true value
+            # is off by the shared bias, so each cell becomes a normal of the bias width.
+            # A cell's own width (uniform: var = width^2 / 12) is added so the interval
+            # stays smooth on a coarse grid; the result never falls inside the plain grid
+            # interval, and is clipped to the prior.
+            bg, bm = self.bias_sd
+            cg, cm = self.g_axis[1] - self.g_axis[0], self.mu_axis[1] - self.mu_axis[0]
+            sg = np.sqrt((self.g_axis * bg) ** 2 + cg ** 2 / 12)
+            sm = np.full_like(self.mu_axis, np.sqrt(bm ** 2 + cm ** 2 / 12))
+            def ci(ax, w, sd, pr):
+                a = min(_mixture_quantile(ax, w, sd, lo), _weighted_quantile(ax, w, lo))
+                b = max(_mixture_quantile(ax, w, sd, hi), _weighted_quantile(ax, w, hi))
+                return float(max(a, pr[0])), float(min(b, pr[1]))
+            return {"g": ci(self.g_axis, wg, sg, self.prior_g), "mu": ci(self.mu_axis, wm, sm, self.prior_mu)}
         return {"g": (_weighted_quantile(self.g_axis, wg, lo), _weighted_quantile(self.g_axis, wg, hi)),
                 "mu": (_weighted_quantile(self.mu_axis, wm, lo), _weighted_quantile(self.mu_axis, wm, hi))}
 

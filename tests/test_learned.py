@@ -102,6 +102,27 @@ def test_correlated_likelihood():
         assert np.ptp(b._loglik(sp, obs)) < spread_indep
 
 
+def test_shared_bias_widens_intervals():
+    with tempfile.TemporaryDirectory() as d:
+        p = Path(d) / "ens.pt"
+        _tiny_ensemble(p)
+        pred = LearnedPredictor(p)
+        assert pred.param_bias_sd is None                        # older checkpoints: no bias term
+        nz = NOISE_LEVELS["medium"]
+        traj = World(HiddenPhysics(9.8, 0.3), nz.pos, nz.vel).execute_experiment(E.make("flat_slide", "block", v0=2.5))
+        b0 = GridBelief(pred, likelihood_sigma(nz), n=8)
+        b0.update(traj)
+        pred.param_bias_sd = np.array([0.02, 0.01])
+        b1 = GridBelief(pred, likelihood_sigma(nz), n=8)
+        b1.update(traj)
+        assert np.allclose(b0.weights, b1.weights) and b0.map == b1.map   # bias only widens the report
+        c0, c1 = b0.credible_interval(), b1.credible_interval()
+        for k in ("g", "mu"):                                    # never narrower; g clearly wider
+            assert c1[k][0] <= c0[k][0] + 1e-12 and c1[k][1] >= c0[k][1] - 1e-12
+        assert c1["g"][1] - c1["g"][0] > c0["g"][1] - c0["g"][0]
+        assert b1.sd[0] > b0.sd[0] and b1.sd[1] > b0.sd[1]
+
+
 def test_belief_runs_with_learned_predictor():
     with tempfile.TemporaryDirectory() as d:
         p = Path(d) / "ens.pt"

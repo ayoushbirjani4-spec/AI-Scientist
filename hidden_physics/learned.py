@@ -403,9 +403,37 @@ def calibrate_error_corr(models: list[GraphStep], val: Dataset, floor: np.ndarra
     return corr.astype(np.float32)
 
 
-def save_ensemble(path, models, floor, meta, error_corr=None):
+def calibrate_param_bias(pred: "LearnedPredictor", specs, n_draws: int = 4, seed: int = 0,
+                         sigma=(0.01, 0.01, 0.1, 0.1)) -> np.ndarray:
+    """Shared-bias widths (relative sd of g, absolute sd of mu) for the belief. [2]
+
+    Noise-free simulator trajectories at random (g, mu) are fitted through the model,
+    one parameter at a time with the other known (as in evaluate_gnn's g check). The
+    model maps the parameters slightly wrong, and the same way in every experiment of
+    a run, so this error does not average away; the belief widens its intervals by it.
+    The RMS is taken so a bias that varies by experiment type counts in full."""
+    from .env import simulate
+    rng = np.random.default_rng(seed)
+    w = 1 / np.asarray(sigma)
+    gs, mus = np.linspace(2, 20, 721), np.linspace(0.05, 0.80, 301)
+    rel_g, abs_mu = [], []
+    for sp in specs:
+        for _ in range(n_draws):
+            gt, mt = rng.uniform(3, 18), rng.uniform(0.1, 0.7)
+            s = simulate(sp, gt, mt)[1][:, LIKELIHOOD_COLS]
+            m = pred.predict_many(sp, gs, np.full_like(gs, mt))
+            rel_g.append((gs[np.argmin((((m - s) * w) ** 2).sum((1, 2)))] - gt) / gt)
+            if sp.kind != "drop":                     # a drop carries no information on mu
+                m = pred.predict_many(sp, np.full_like(mus, gt), mus)
+                abs_mu.append(mus[np.argmin((((m - s) * w) ** 2).sum((1, 2)))] - mt)
+    rms = lambda x: float(np.sqrt(np.mean(np.square(x)))) if len(x) else 0.0
+    return np.array([rms(rel_g), rms(abs_mu)], np.float32)
+
+
+def save_ensemble(path, models, floor, meta, error_corr=None, param_bias_sd=None):
     torch.save({"state_dicts": [m.state_dict() for m in models], "hidden": models[0].hidden,
                 "g_scaled": models[0].g_scaled, "floor_var": floor, "error_corr": error_corr,
+                "param_bias_sd": param_bias_sd,
                 "meta": meta}, path)
 
 
@@ -428,6 +456,7 @@ class LearnedPredictor:
             self.models.append(m)
         self.floor_var = ck["floor_var"]
         self.error_corr = ck.get("error_corr")      # None: belief treats frames as independent
+        self.param_bias_sd = ck.get("param_bias_sd")  # None (older checkpoints): no shared-bias term
         self.meta = ck["meta"]
         self.version = f"stageB-gnn{'-gscaled' if g_scaled else ''}-ensemble{len(self.models)}"
         # Run all members at once: stack their weights and vmap one functional step.

@@ -12,7 +12,9 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from .planner import SCRIPT
 from .learned import (Dataset, LearnedPredictor, calibrate_error_corr, calibrate_floor,
+                      calibrate_param_bias,
                       generate_dataset, rollout_error, save_ensemble, train_member)
 
 
@@ -54,7 +56,10 @@ def main():
         pred = LearnedPredictor(a.out)
         floor = calibrate_floor(pred.models, val)
         corr = calibrate_error_corr(pred.models, val, floor)
-        save_ensemble(a.out, pred.models, floor, pred.meta, corr)
+        pred.floor_var, pred.error_corr = floor, corr
+        bias = calibrate_param_bias(pred, SCRIPT[:5])
+        save_ensemble(a.out, pred.models, floor, pred.meta, corr, bias)
+        print(f"shared bias sd: g {bias[0]:.2%} (relative), mu {bias[1]:.4f} (absolute)")
         print(f"recalibrated {a.out}: lag-1 / lag-10 error correlation per column (x, y, vx, vy):")
         for c in range(4):
             print(f"  {np.diag(corr[c], 1)[5:20].mean():.2f} / {np.diag(corr[c], 10)[5:20].mean():.2f}")
@@ -80,6 +85,8 @@ def main():
             "epochs_one": a.epochs_one, "epochs_roll": a.epochs_roll, "split_seed": 0,
             "data": str(data_path), "g_scaled": not a.no_g_scaled, "train_seconds": time.time() - t0}
     save_ensemble(out, models, floor, meta, corr)
+    bias = calibrate_param_bias(LearnedPredictor(out), SCRIPT[:5])
+    save_ensemble(out, models, floor, meta, corr, bias)
     (out.parent / "train_log.json").write_text(json.dumps({"meta": meta, "history": hists}, indent=1))
     print(f"saved {out} in {time.time() - t0:.0f}s")
 

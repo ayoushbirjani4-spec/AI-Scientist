@@ -1,0 +1,53 @@
+C:\Users\Ayush Birjani\OneDrive\Desktop\AI-scientist\hidden_physics\evaluate_gnn.py:103: RuntimeWarning: invalid value encountered in divide
+  z = np.abs(mean[..., LIKELIHOOD_COLS] - test.states[..., LIKELIHOOD_COLS]) / np.sqrt(var)
+  inference 1/40
+  inference 2/40
+  inference 3/40
+  inference 4/40
+  inference 5/40
+  inference 6/40
+  inference 7/40
+  inference 8/40
+  inference 9/40
+  inference 10/40
+  inference 11/40
+  inference 12/40
+  inference 13/40
+  inference 14/40
+  inference 15/40
+  inference 16/40
+  inference 17/40
+  inference 18/40
+  inference 19/40
+  inference 20/40
+  inference 21/40
+  inference 22/40
+  inference 23/40
+  inference 24/40
+  inference 25/40
+  inference 26/40
+  inference 27/40
+  inference 28/40
+  inference 29/40
+  inference 30/40
+  inference 31/40
+  inference 32/40
+  inference 33/40
+  inference 34/40
+  inference 35/40
+  inference 36/40
+  inference 37/40
+  inference 38/40
+  inference 39/40
+  inference 40/40
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Ayush Birjani\OneDrive\Desktop\AI-scientist\hidden_physics\evaluate_gnn.py", line 275, in <module>
+    main()
+  File "C:\Users\Ayush Birjani\OneDrive\Desktop\AI-scientist\hidden_physics\evaluate_gnn.py", line 271, in main
+    print("\n".join(L))
+  File "C:\Users\Ayush Birjani\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u03bc' in position 313: character maps to <undefined>
