@@ -2,6 +2,8 @@
 
 Model: stageB-gnn-gscaled-ensemble5, trained on 4000 trajectories (80/10/10 split by scene and parameter draw).
 
+> **Note (added later):** this run used the checkpoint now saved as `models/gnn_gscaled_nocorr.pt`, with no frame-to-frame error correlation. `models/gnn_gscaled.pt` was overwritten afterwards with the correlated version (same weights). Confirmed by rerunning seeds 7 and 0 exactly. For the correlated model see `results/gnn_corr/`, and with the shared bias term `results/gnn_tuned/`.
+
 ![rollout error](rollout_error_vs_time.png)
 
 ## 1. Rollout accuracy on held-out trajectories

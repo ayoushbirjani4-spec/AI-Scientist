@@ -72,6 +72,18 @@ def test_drop_does_not_identify_mu():
     assert b.sd[0] < 0.05 and b.sd[1] > 0.15   # g known, mu still broad
 
 
+def test_grid_expands_when_truth_is_cut_off():
+    # A grid that shrank onto the wrong spot must not pin the estimate to its edge.
+    nz = NOISE_LEVELS["medium"]
+    w = World(HiddenPhysics(4.37, 0.45), nz.pos, nz.vel, seed=0)
+    b = GridBelief(SimulatorPredictor(), likelihood_sigma(nz))
+    b._set_grid((5.0, 6.0), (0.30, 0.50))                 # truth g = 4.37 is outside
+    for _ in range(2):                                    # widening happens on the next update
+        b.update(w.execute_experiment(E.make("drop", "block", height=1.3)))
+    assert b.g_axis[0] <= 4.37 <= b.g_axis[-1] and b.n_expands > 0
+    assert abs(b.mean[0] - 4.37) < 0.05
+
+
 def test_info_gain_prefers_friction_experiment_when_g_known():
     nz = NOISE_LEVELS["medium"]
     pred = SimulatorPredictor()

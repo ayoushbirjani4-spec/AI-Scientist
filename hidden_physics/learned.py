@@ -403,15 +403,22 @@ def calibrate_error_corr(models: list[GraphStep], val: Dataset, floor: np.ndarra
     return corr.astype(np.float32)
 
 
+# Scales on the measured bias widths (g, mu), chosen so the 90% intervals cover the
+# truth about 90% of the time on calibration seeds 100-109 (never the reporting seeds
+# 0-9): measured widths alone gave 0.97 / 0.90 there. See results/gnn_tuned.
+PARAM_BIAS_SCALE = (0.55, 1.2)
+
+
 def calibrate_param_bias(pred: "LearnedPredictor", specs, n_draws: int = 4, seed: int = 0,
-                         sigma=(0.01, 0.01, 0.1, 0.1)) -> np.ndarray:
+                         sigma=(0.01, 0.01, 0.1, 0.1), scale=PARAM_BIAS_SCALE) -> np.ndarray:
     """Shared-bias widths (relative sd of g, absolute sd of mu) for the belief. [2]
 
     Noise-free simulator trajectories at random (g, mu) are fitted through the model,
     one parameter at a time with the other known (as in evaluate_gnn's g check). The
     model maps the parameters slightly wrong, and the same way in every experiment of
     a run, so this error does not average away; the belief widens its intervals by it.
-    The RMS is taken so a bias that varies by experiment type counts in full."""
+    The RMS is taken so a bias that varies by experiment type counts in full, then
+    multiplied by `scale` (coverage-tuned; pass (1, 1) for the raw measurement)."""
     from .env import simulate
     rng = np.random.default_rng(seed)
     w = 1 / np.asarray(sigma)
@@ -427,7 +434,7 @@ def calibrate_param_bias(pred: "LearnedPredictor", specs, n_draws: int = 4, seed
                 m = pred.predict_many(sp, np.full_like(mus, gt), mus)
                 abs_mu.append(mus[np.argmin((((m - s) * w) ** 2).sum((1, 2)))] - mt)
     rms = lambda x: float(np.sqrt(np.mean(np.square(x)))) if len(x) else 0.0
-    return np.array([rms(rel_g), rms(abs_mu)], np.float32)
+    return (np.array([rms(rel_g), rms(abs_mu)]) * np.asarray(scale)).astype(np.float32)
 
 
 def save_ensemble(path, models, floor, meta, error_corr=None, param_bias_sd=None):

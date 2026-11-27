@@ -14,7 +14,7 @@ import torch
 
 from .planner import SCRIPT
 from .learned import (Dataset, LearnedPredictor, calibrate_error_corr, calibrate_floor,
-                      calibrate_param_bias,
+                      calibrate_param_bias, PARAM_BIAS_SCALE,
                       generate_dataset, rollout_error, save_ensemble, train_member)
 
 
@@ -59,7 +59,8 @@ def main():
         pred.floor_var, pred.error_corr = floor, corr
         bias = calibrate_param_bias(pred, SCRIPT[:5])
         save_ensemble(a.out, pred.models, floor, pred.meta, corr, bias)
-        print(f"shared bias sd: g {bias[0]:.2%} (relative), mu {bias[1]:.4f} (absolute)")
+        print(f"shared bias sd: g {bias[0]:.2%} (relative), mu {bias[1]:.4f} (absolute), "
+              f"after coverage scale {PARAM_BIAS_SCALE}")
         print(f"recalibrated {a.out}: lag-1 / lag-10 error correlation per column (x, y, vx, vy):")
         for c in range(4):
             print(f"  {np.diag(corr[c], 1)[5:20].mean():.2f} / {np.diag(corr[c], 10)[5:20].mean():.2f}")

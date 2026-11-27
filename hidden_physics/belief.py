@@ -64,6 +64,7 @@ class GridBelief:
         self.max_refines = max_refines
         self.history: list[tuple[ExperimentSpec, np.ndarray]] = []
         self.n_refines = 0
+        self.n_expands = 0
         self._set_grid(self.prior_g, self.prior_mu)
 
     # ---------------- grid management ----------------
@@ -148,6 +149,27 @@ class GridBelief:
         """Mean squared normalized residual over the whole experiment."""
         return float(np.mean(self.residual_frames(spec, obs, g, mu)))
 
+    def _expand_edges(self, edge_tol: float = 0.02, max_expands: int = 4) -> None:
+        """Widen the grid on any side where the posterior piles up against an edge that
+        is not the prior bound. Without this a grid that shrank onto the wrong spot (e.g.
+        a slide cutting the mu*g ridge) can never move back: the estimate sticks to its
+        edge however much later evidence disagrees."""
+        for _ in range(max_expands):
+            w = self.weights.reshape(self.n, self.n)
+            new = []
+            for ax, wm, prior in ((self.g_axis, w.sum(1), self.prior_g), (self.mu_axis, w.sum(0), self.prior_mu)):
+                lo, hi = float(ax[0]), float(ax[-1])
+                span = hi - lo
+                if wm[0] > edge_tol and lo > prior[0]:
+                    lo = max(prior[0], lo - span)
+                if wm[-1] > edge_tol and hi < prior[1]:
+                    hi = min(prior[1], hi + span)
+                new.append((lo, hi))
+            if new[0] == (float(self.g_axis[0]), float(self.g_axis[-1])) and                     new[1] == (float(self.mu_axis[0]), float(self.mu_axis[-1])):
+                return
+            self._set_grid(*new)
+            self.n_expands += 1
+
     def _maybe_refine(self):
         for _ in range(self.max_refines):
             (mg, mm), (sg, sm) = self.mean, self._raw_sd()
@@ -164,6 +186,10 @@ class GridBelief:
     # ---------------- public API ----------------
     def update(self, traj: Trajectory) -> None:
         obs = traj.states[:, LIKELIHOOD_COLS]
+        # Widen first, from the evidence so far, not after adding this experiment: the
+        # change detector must judge new data against the grid it was predicted on,
+        # or the grid stretches toward contaminated data and hides the change.
+        self._expand_edges()
         self.history.append((traj.spec, obs))
         self.loglik += self._loglik(traj.spec, obs)
         self._fit_temperature()

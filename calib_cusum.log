@@ -1,0 +1,59 @@
+calibration 1/48
+calibration 2/48
+calibration 3/48
+calibration 4/48
+calibration 5/48
+calibration 6/48
+calibration 7/48
+calibration 8/48
+calibration 9/48
+calibration 10/48
+calibration 11/48
+calibration 12/48
+calibration 13/48
+calibration 14/48
+calibration 15/48
+calibration 16/48
+calibration 17/48
+calibration 18/48
+calibration 19/48
+calibration 20/48
+calibration 21/48
+calibration 22/48
+calibration 23/48
+calibration 24/48
+calibration 25/48
+calibration 26/48
+calibration 27/48
+calibration 28/48
+calibration 29/48
+calibration 30/48
+calibration 31/48
+calibration 32/48
+calibration 33/48
+calibration 34/48
+calibration 35/48
+calibration 36/48
+calibration 37/48
+calibration 38/48
+calibration 39/48
+calibration 40/48
+calibration 41/48
+calibration 42/48
+calibration 43/48
+calibration 44/48
+calibration 45/48
+calibration 46/48
+calibration 47/48
+calibration 48/48
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Ayush Birjani\OneDrive\Desktop\AI-scientist\hidden_physics\calibrate_cusum.py", line 123, in <module>
+    main()
+  File "C:\Users\Ayush Birjani\OneDrive\Desktop\AI-scientist\hidden_physics\calibrate_cusum.py", line 119, in main
+    print("\n".join(L))
+  File "C:\Users\Ayush Birjani\AppData\Local\Programs\Python\Python311\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2212' in position 304: character maps to <undefined>
